@@ -56,7 +56,7 @@ import { goto } from '$app/navigation';
 					<td> {user.name} </td>
 					<td> {user.nickname} </td>
 					<td> {user.birthdate} </td>
-					<td> {user.lastActivity} </td>
+					<td> {(user.lastActivity == undefined) ? "Žádná" : user.lastActivity} </td>
 					<td >
 						{user.role == 0
 							? 'Hráč'
@@ -68,7 +68,7 @@ import { goto } from '$app/navigation';
 							? 'Root'
 							: 'Neznámá role'}
 					</td>
-					<td> {user.group} </td>
+					<td> {(user.group == undefined) ? "Žádná" : user.group} </td>
 					<td data-center>	
 						<div class="box" class:active={viewedUser && (viewedUser._id == user._id) } on:mousedown={() => openUserProfile(user._id)}>
 							<span class="material-symbols-outlined"> visibility </span>
@@ -102,7 +102,9 @@ import { goto } from '$app/navigation';
 			border-collapse: collapse;
 			-webkit-border-horizontal-spacing: -0px;
 			-webkit-border-vertical-spacing: -0px;
-			border-radius: 5px;
+			//border top left and top right 5 px
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
 			th {
 				position: sticky;
 				top: 0;
@@ -111,7 +113,7 @@ import { goto } from '$app/navigation';
 				font-weight: 400;
 				font-size: 10px;
 				text-align: left;
-				background-color: #161616;
+				background-color: var(--header-color);
 				white-space: nowrap;
 				&:nth-child(1) {
 					border-top-left-radius: 5px;

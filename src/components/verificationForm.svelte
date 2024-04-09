@@ -6,10 +6,10 @@
 	let loading: boolean = false;
 	$: loading_class = loading ? 'loading' : '';
 
-    export let email: any;
+	export let email: any;
 
-	verificationEmail.subscribe((v: any) => email = v)
-    
+	verificationEmail.subscribe((v: any) => (email = v));
+
 	let code = '';
 
 	let watchedEmail: string | undefined = undefined;
@@ -20,17 +20,26 @@
 
 	let errorPassword: string | undefined = undefined;
 
+	// input only numbers function
+
+	function onlyNumbers(evt: any) {
+		console.log(evt)
+		var charCode = evt.which ? evt.which : evt.keyCode;
+		if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+		return true;
+	}
+
 	function login() {
 		loading = true;
 		req
 			.patch('/users/verify', {
-                email: email,
+				email: email,
 				code: code
 			})
 			.then((response) => {
 				console.log(response);
 				loading = false;
-                goto('/');
+				goto('/');
 			})
 			.catch((err) => {
 				console.log(err);
@@ -53,9 +62,9 @@
 		if (code.length < 1) {
 			errorPassword = 'Kód nemůže být prázdný';
 		}
-        if(code.length > 6) {
-            errorPassword = 'Kód nemůže být delší než 6 znaků'
-        }
+		if (code.length > 6) {
+			errorPassword = 'Kód nemůže být delší než 6 znaků';
+		}
 		if (errorPassword === undefined && errorEmail === undefined) {
 			return login();
 		}
@@ -70,26 +79,23 @@
 	<form on:submit={checkForm} novalidate>
 		<div class="email">
 			<div class="box">
-				<span class="material-symbols-outlined"> email </span>
-                <p>{ email }</p>
+				<div class="icon">
+					<span class="material-symbols-outlined"> email </span>
+				</div>
+				<p>{email}</p>
 			</div>
 		</div>
-		{#if errorEmail !== undefined}
-			<div class="errorEmail">
-				<span class="material-symbols-outlined"> error </span>
-				<p>{errorEmail}</p>
-			</div>
-		{/if}
 		<div class="code">
 			<label for="code" class:error={errorPassword !== undefined}>Heslo</label>
 			<input
-                type="text"
-                pattern="[0-9]"
-                autocomplete="off"
+				type="text"
+				pattern="[0-9]"
+				autocomplete="off"
 				id="code"
-                maxlength="6"
+				maxlength="6"
 				class:error={errorPassword !== undefined}
 				bind:value={code}
+				on:input|preventDefault={onlyNumbers}
 				on:input={watchForm}
 				placeholder="123456"
 			/>
@@ -128,6 +134,7 @@
 		align-items: left;
 		justify-content: center;
 		width: 400px;
+
 		h1 {
 			font-size: 28px;
 			color: var(--default-text-color);
@@ -310,20 +317,34 @@
 				height: $input-height + 10px;
 				border-radius: 5px;
 				background-color: #1d1d1d;
-                display: flex;
-                align-items: center;
-                padding: 0 20px;
+				display: flex;
+				align-items: center;
+				padding: 0 20px 0 0px;
 				.material-symbols-outlined {
 					font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 16;
-                    color: var(--third-text-color);
-                    font-size: 21px;
+					color: var(--third-text-color);
+					font-size: 21px;
 				}
-                p{
-                    margin-left: 10px;
-                    font-size: 14px;
-                    color: var(--third-text-color);
-                    font-weight: 400;
-                }
+				p {
+					margin-left: 10px;
+					font-size: 14px;
+					color: var(--third-text-color);
+					font-weight: 400;
+				}
+			}
+			.icon {
+				width: $input-height + 10px;
+				height: $input-height + 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: #202020;
+				border-radius: 5px 0 0 5px;
+				.material-symbols-outlined {
+					font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 16;
+					color: var(--third-text-color);
+					font-size: 21px;
+				}
 			}
 		}
 	}
